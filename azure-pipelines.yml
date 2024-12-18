@@ -1,19 +1,30 @@
 trigger:
 - main
 
-stages:
-- stage: Stage1
-  jobs:
-  - job: Job1
-    steps:
-    - script: echo "Step 1 in Stage 1"
-    - script: echo "Step 2 in Stage 1"
-    - script: echo "Step 3 in Stage 1"
+pool:
+  vmImage: 'ubuntu-latest'
 
-- stage: Stage2
+stages:
+- stage: Preparation
+  displayName: 'Preparation'
   jobs:
   - job: Job1
     steps:
-    - script: echo "Step 1 in Stage 2"
-    - script: echo "Step 2 in Stage 2"
-    - script: echo "Step 3 in Stage 2"
+    - script: echo "Preparation stage completed successfully"
+      displayName: 'Prepare Environment'
+
+- stage: Build
+  displayName: 'Build'
+  jobs:
+  - job: Job1
+    steps:
+    - script: exit 1
+      displayName: 'Intentional Build Failure'
+
+- stage: PostProcess
+  displayName: 'Post-Process'
+  jobs:
+  - job: Job1
+    steps:
+    - script: echo "Hello"
+      displayName: 'Print Hello'
