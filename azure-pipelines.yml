@@ -1,19 +1,56 @@
-# azure-pipelines.yml
- 
 trigger:
+  branches:
+    include:
+      - main
 
-- main  # or 'master', depending on your default branch
- 
-pool:
+stages:
+  # Stage 1: Build
+  - stage: Build
+    displayName: Build Application
+    jobs:
+      - job: BuildJob
+        displayName: Build Job
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - task: UseDotNet@2   # Example: Use .NET SDK
+            inputs:
+              version: '6.x'    # Specify your desired .NET version
+          - script: |
+              dotnet restore
+              dotnet build --configuration Release
+            displayName: Build and Restore Code
+          - script: |
+              dotnet test
+            displayName: Run Unit Tests
+          - task: PublishBuildArtifacts@1
+            inputs:
+              pathToPublish: '$(Build.SourcesDirectory)/bin/Release'
+              artifactName: 'drop'
+              publishLocation: 'Container'
+            displayName: Publish Build Artifacts
 
-  vmImage: 'ubuntu-latest'
- 
-steps:
-
-- checkout: self
- 
-- script: echo "Hello from Azure DevOps Pipeline!"
-
-  displayName: 'Run a one-line script'
-
- 
+  # Stage 2: Deploy
+  - stage: Deploy
+    displayName: Deploy Application
+    dependsOn: Build
+    condition: succeeded()  # Deploy only if Build stage succeeds
+    jobs:
+      - job: DeployJob
+        displayName: Deploy Job
+        pool:
+          vmImage: 'ubuntu-latest'
+        steps:
+          - script: echo "Downloading artifacts..."
+            displayName: Download Build Artifacts
+          - task: DownloadBuildArtifacts@0
+            inputs:
+              buildType: 'current'
+              downloadType: 'single'
+              artifactName: 'drop'
+              path: '$(System.ArtifactsDirectory)'
+          # Replace the below with steps to deploy your app (e.g., copy files, Kubernetes, ARM template deployment, etc.)
+          - script: echo "Deploying application..."
+            displayName: Deploy Application
+          - script: echo "Deployment successful!"
+            displayName: Deployment Confirmation
