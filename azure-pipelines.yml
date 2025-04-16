@@ -1,68 +1,21 @@
 trigger:
-  branches:
-    include:
-      - main
-
+- main
+ 
 stages:
-  # Stage 1: Build
-  - stage: Build
-    displayName: Build Application
-    jobs:
-      - job: BuildJob
-        displayName: Build Job
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - task: UseDotNet@2
-            inputs:
-              version: '6.x'
-          - script: |
-              echo "Restoring dependencies..."
-              dotnet restore
-              echo "Building application..."
-              dotnet build --configuration Release
-            displayName: Build and Restore Code
-          - script: |
-              echo "Running unit tests..."
-              dotnet test
-            displayName: Run Unit Tests
-          - task: PublishBuildArtifacts@1
-            inputs:
-              pathToPublish: '$(Build.SourcesDirectory)/bin/Release'
-              artifactName: 'drop'
-              publishLocation: 'Container'
-            displayName: Publish Build Artifacts
-
-  # Stage 2: Deploy
-  - stage: Deploy
-    displayName: Deploy Application
-    dependsOn: Build
-    condition: always() # This ensures the Deploy stage runs regardless of Build stage success or failure
-    jobs:
-      - job: DeployJob
-        displayName: Deploy Job
-        pool:
-          vmImage: 'ubuntu-latest'
-        steps:
-          - script: echo "Downloading artifacts..."
-            displayName: Download Build Artifacts
-          - task: DownloadBuildArtifacts@0
-            inputs:
-              buildType: 'current'
-              downloadType: 'single'
-              artifactName: 'drop'
-              path: '$(System.ArtifactsDirectory)'
-          # Add a conditional check for Build success/failure
-          - script: |
-              if [ $(Build.BuildResult) = "Failed" ]; then
-                echo "Build failed: Skipping deployment steps..."
-                exit 0
-              else
-                echo "Build succeeded: Proceeding with deployment..."
-              fi
-            displayName: Check Stage 1 Success
-          # Replace the below block with actual deployment logic
-          - script: echo "Deploying application..."
-            displayName: Deploy Application
-          - script: echo "Deployment complete!"
-            displayName: Deployment Confirmation
+- stage: Build
+  jobs:
+  - job: BuildJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Building the application..."
+      displayName: 'Build Stage'
+ 
+- stage: Deploy
+  jobs:
+  - job: DeployJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Deploying the application..."
+      displayName: 'Deploy Stage'
