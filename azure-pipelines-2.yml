@@ -17,7 +17,5 @@ steps:
 
 - script: |
     npm install
-    echo "Failing pipeline intentionally here!"
-    exit 1
     npm run build
   displayName: 'npm install and build'
