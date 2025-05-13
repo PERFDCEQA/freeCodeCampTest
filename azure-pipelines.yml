@@ -6,9 +6,9 @@ stages:
   jobs:
   - job: BuildJob
     pool:
-      vmImage: 'ubuntu-latest1'
+      vmImage: 'ubuntu-latest'
     steps:
-    - script: 1echo "Building the application..."
+    - script: echo "Building the application..."
       displayName: 'Build Stage'
  
 - stage: Deploy
