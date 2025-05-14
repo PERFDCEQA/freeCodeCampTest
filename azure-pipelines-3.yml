@@ -1,21 +1,52 @@
-# Node.js with React
-# Build a Node.js project that uses React.
-# Add steps that analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/javascript
+parameters:
+- name: failStage
+  type: string
+  default: 'fail'
+  values:
+  - fail
+  - success
 
-trigger:
-- main
+stages:
+- stage: Build
+  displayName: 'Build Stage'
+  jobs:
+  - job: BuildJob
+    displayName: 'Build Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        echo Building the project...
+      displayName: 'Build step'
 
-pool:
-  vmImage: ubuntu-latest
+- stage: Test
+  displayName: 'Test Stage'
+  dependsOn: Build
+  jobs:
+  - job: TestJob
+    displayName: 'Test Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        echo Running tests...
+        if [ "${{ parameters.failStage }}" = "fail" ]; then
+            echo "Simulated failure ttttt"
+            exit 1
+        else
+            echo "Tests passed successfully"
+        fi
+      displayName: 'Run tests'
 
-steps:
-- task: NodeTool@0
-  inputs:
-    versionSpec: '20.x'
-  displayName: 'Install Node.js'
-
-- script: |
-    npm install
-    npm run build
-  displayName: 'npm install and build'
+- stage: Deploy
+  displayName: 'Deploy Stage'
+  dependsOn: Test
+  jobs:
+  - job: DeployJob
+    displayName: 'Deploy Job'
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: |
+        echo Deploying the application...
+      displayName: 'Deploy step'
