@@ -16,3 +16,21 @@ stages:
     steps:
     - script: echo "Deploying the application..."
       displayName: 'Deploy Stage'
+
+- stage: Deploy1
+  jobs:
+  - job: DeployJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Deploying the application..."
+      displayName: 'Deploy Stage'  
+
+- stage: Deploy2
+  jobs:
+  - job: DeployJob
+    pool:
+      vmImage: 'ubuntu-latest'
+    steps:
+    - script: echo "Deploying the application..."
+      displayName: 'Deploy Stage'
