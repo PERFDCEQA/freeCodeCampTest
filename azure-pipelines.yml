@@ -8,10 +8,10 @@ stages:
     - script: echo "Building the application..."
       displayName: 'Build Stage'
 
-# Эта стадия будет скипнута
+# Эти три стадии стартуют одновременно после Build
 - stage: Deploy
-  dependsOn: []
-  condition: false    # <-- Стадия пропускается
+  dependsOn: Build
+  condition: false    # <-- Пропустить Deploy
   jobs:
   - job: DeployJob
     pool:
@@ -21,23 +21,22 @@ stages:
       displayName: 'Deploy Stage'
 
 - stage: Deploy1
-  dependsOn: []
+  dependsOn: Build
   jobs:
   - job: DeployJob
     pool:
       vmImage: 'ubuntu-latest'
     steps:
     - script: echo "Deploying the application..."
-      displayName: 'Deploy Stage'
+      displayName: 'Deploy1 Stage'
 
-# Эта стадия тоже будет скипнута
 - stage: Deploy2
-  dependsOn: []
-  condition: false    # <-- Стадия пропускается
+  dependsOn: Build
+  condition: false    # <-- Пропустить Deploy2
   jobs:
   - job: DeployJob
     pool:
       vmImage: 'ubuntu-latest'
     steps:
     - script: echo "Deploying the application..."
-      displayName: 'Deploy Stage'
+      displayName: 'Deploy2 Stage'
