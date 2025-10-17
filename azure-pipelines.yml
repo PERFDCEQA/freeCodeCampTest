@@ -8,9 +8,10 @@ stages:
     - script: echo "Building the application..."
       displayName: 'Build Stage'
 
- 
+# Эта стадия будет скипнута
 - stage: Deploy
-  dependsOn: []   
+  dependsOn: []
+  condition: false    # <-- Стадия пропускается
   jobs:
   - job: DeployJob
     pool:
@@ -20,7 +21,7 @@ stages:
       displayName: 'Deploy Stage'
 
 - stage: Deploy1
-  dependsOn: []    
+  dependsOn: []
   jobs:
   - job: DeployJob
     pool:
@@ -29,8 +30,10 @@ stages:
     - script: echo "Deploying the application..."
       displayName: 'Deploy Stage'
 
+# Эта стадия тоже будет скипнута
 - stage: Deploy2
-  dependsOn: []   
+  dependsOn: []
+  condition: false    # <-- Стадия пропускается
   jobs:
   - job: DeployJob
     pool:
