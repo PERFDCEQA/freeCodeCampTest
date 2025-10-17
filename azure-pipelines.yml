@@ -7,8 +7,10 @@ stages:
     steps:
     - script: echo "Building the application..."
       displayName: 'Build Stage'
+
  
 - stage: Deploy
+  dependsOn: []   
   jobs:
   - job: DeployJob
     pool:
@@ -18,15 +20,17 @@ stages:
       displayName: 'Deploy Stage'
 
 - stage: Deploy1
+  dependsOn: []    
   jobs:
   - job: DeployJob
     pool:
       vmImage: 'ubuntu-latest'
     steps:
     - script: echo "Deploying the application..."
-      displayName: 'Deploy Stage'  
+      displayName: 'Deploy Stage'
 
 - stage: Deploy2
+  dependsOn: []   
   jobs:
   - job: DeployJob
     pool:
